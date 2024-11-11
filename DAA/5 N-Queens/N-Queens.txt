@@ -1,0 +1,66 @@
+class NQueens:
+    def __init__(self, n, first_row, first_col):
+        self.n = n
+        self.first_row = first_row
+        self.first_col = first_col
+        self.solutions = []
+        self.board = [["." for _ in range(n)] for _ in range(n)]
+        self.board[first_row][first_col] = 'Q'
+
+    def is_safe(self, row, col):
+        for i in range(self.n):
+            if self.board[i][col] == 'Q':
+                return False
+
+        for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
+            if self.board[i][j] == 'Q':
+                return False
+
+        for i, j in zip(range(row, -1, -1), range(col, self.n)):
+            if self.board[i][j] == 'Q':
+                return False
+
+        return True
+
+    def solve(self, row):
+        if row == self.n:
+            self.solutions.append(["".join(r) for r in self.board])
+            return
+
+        if row == self.first_row:
+            self.solve(row + 1)
+            return
+
+        for col in range(self.n):
+            if self.is_safe(row, col):
+                self.board[row][col] = 'Q'
+                self.solve(row + 1)
+                self.board[row][col] = '.'
+
+    def get_solutions(self):
+        self.solve(0)
+        return self.solutions
+
+
+# Input
+n = int(input("Enter the size of the board (n): "))
+first_row = int(input("Enter the row to place the first queen (0-indexed): "))
+first_col = int(input("Enter the column to place the first queen (0-indexed): "))
+
+# Validate the starting position
+if first_row < 0 or first_row >= n or first_col < 0 or first_col >= n:
+    print("Invalid starting position.")
+else:
+    n_queens = NQueens(n, first_row, first_col)
+    solutions = n_queens.get_solutions()
+
+    # Output the solutions
+    if solutions:
+        for i, solution in enumerate(solutions):
+            print(f"Arrangement {i + 1}:")
+            for row in solution:
+                print(row)
+            print()
+        print(f"Successfully found {len(solutions)} arrangement(s) for the given position.")
+    else:
+        print("No arrangements found.")
